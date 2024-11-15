@@ -177,7 +177,7 @@ function formatAsTable(data) {
         const typingIndicator = addTypingIndicator();
 
         try {
-          const response = await fetch("http://localhost:5000/prompt", {
+          const response = await fetch("https://financeassitant-production.up.railway.app/prompt", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
