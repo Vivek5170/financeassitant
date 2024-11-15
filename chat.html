@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinanceAI Chatbot - Chat</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      .bg-gradient {
+        background: linear-gradient(135deg, #1a332f 0%, #0a0f0d 100%);
+      }
+      .text-gradient {
+        background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .typing-indicator::after {
+        content: "...";
+        animation: ellipsis 1.5s infinite;
+      }
+      @keyframes ellipsis {
+        0% {
+          content: ".";
+        }
+        33% {
+          content: "..";
+        }
+        66% {
+          content: "...";
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gradient min-h-screen flex flex-col text-white">
+    <header class="bg-black bg-opacity-50 p-4">
+      <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gradient">FinanceAI Chatbot</h1>
+        <a
+          href="index.html"
+          class="text-green-400 hover:text-green-300 transition duration-300"
+          >Back to Home</a
+        >
+      </div>
+    </header>
+    <main class="flex-grow flex flex-col max-w-4xl mx-auto w-full p-4">
+      <div
+        id="chat-messages"
+        class="flex-grow overflow-y-auto mb-4 space-y-4 p-4 bg-black bg-opacity-30 rounded-lg"
+      ></div>
+      <form id="chat-form" class="flex space-x-2">
+        <input
+          type="text"
+          id="user-input"
+          class="flex-grow p-3 rounded-lg bg-gray-800 text-white border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Ask about financial information..."
+        />
+        <button
+          type="submit"
+          class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105"
+        >
+          Send
+        </button>
+      </form>
+    </main>
+
+    <script>
+      const chatMessages = document.getElementById("chat-messages");
+      const chatForm = document.getElementById("chat-form");
+      const userInput = document.getElementById("user-input");
+
+      // function addMessage(content, isUser = false) {
+      //   const messageDiv = document.createElement("div");
+      //   messageDiv.className = `p-3 rounded-lg ${
+      //     isUser ? "bg-green-800 ml-auto" : "bg-gray-800"
+      //   } max-w-3/4 animate-fadeIn`;
+      //   messageDiv.textContent = content;
+      //   chatMessages.appendChild(messageDiv);
+      //   chatMessages.scrollTop = chatMessages.scrollHeight;
+      // }      
+
+      function addMessage(content, isUser = false) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `p-3 rounded-lg ${
+          isUser ? "bg-green-800 ml-auto" : "bg-gray-800"
+        } max-w-3/4 animate-fadeIn`;
+      
+        // Check if the content is an object or array and format accordingly
+        if (typeof content === "object") {
+          messageDiv.innerHTML = formatAsTable(content);
+        } else {
+          messageDiv.textContent = content;
+        }
+      
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+// Helper function to convert an object or array to a table format
+      // Helper function to convert an object or array to a table format
+function formatAsTable(data) {
+  let tableHTML = "<table class='w-full text-white table-auto border-collapse'>";
+  
+  if (Array.isArray(data)) {
+    // Handle an array of objects
+    data.forEach((item) => {
+      tableHTML += "<tr>";
+      for (const key in item) {
+        tableHTML += `<td class="border border-gray-500 p-2">${formatValue(item[key])}</td>`;
+      }
+      tableHTML += "</tr>";
+    });
+  } else {
+    // Handle a single object
+    for (const key in data) {
+      tableHTML += `<tr><th class="border border-gray-500 p-2">${key}</th><td class="border border-gray-500 p-2">${formatValue(data[key])}</td></tr>`;
+    }
+  }
+
+  tableHTML += "</table>";
+  return tableHTML;
+}
+
+      // Helper function to format nested objects and arrays
+      function formatValue(value) {
+  if (value === null || value === undefined || value=== NaN) {
+    return "N/A"; // Handle null or undefined gracefully
+  }
+  
+  if (typeof value === "object" && !Array.isArray(value)) {
+    // Recursively format objects as a sub-table
+    return formatAsTable(value);
+  } else if (Array.isArray(value)) {
+    // Format arrays as comma-separated lists
+    return value.map(formatValue).join(", ");
+  }
+  
+  return value.toString(); // Convert any other type to string
+}
+
+
+      function addTypingIndicator() {
+        const indicatorDiv = document.createElement("div");
+        indicatorDiv.className =
+          "p-3 rounded-lg bg-gray-800 max-w-3/4 animate-fadeIn typing-indicator";
+        indicatorDiv.textContent = "AI is typing";
+        chatMessages.appendChild(indicatorDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return indicatorDiv;
+      }
+
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, true);
+        userInput.value = "";
+        userInput.disabled = true;
+
+        const typingIndicator = addTypingIndicator();
+
+        try {
+          const response = await fetch("http://localhost:5000/prompt", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: message }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          typingIndicator.remove();
+          addMessage(data.response);
+        } catch (error) {
+          console.error("Error:", error);
+          typingIndicator.remove();
+          addMessage(`Sorry, there was an error processing your request vk: ${error.message || JSON.stringify(error)}`);
+        } finally {
+          userInput.disabled = false;
+          userInput.focus();
+        }
+      });
+
+      // Add an initial greeting message
+      addMessage(
+        "Hello! I'm your FinanceAI assistant. How can I help you with financial information today?"
+      );
+    </script>
+  </body>
+</html>

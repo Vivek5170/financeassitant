@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinanceAI Chatbot</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.8s ease-out forwards;
+      }
+      .bg-gradient {
+        background: linear-gradient(135deg, #1a332f 0%, #0a0f0d 100%);
+      }
+      .text-gradient {
+        background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient min-h-screen flex items-center justify-center text-white"
+  >
+    <div
+      class="max-w-4xl mx-auto p-8 bg-black bg-opacity-50 rounded-lg shadow-lg text-center animate-fadeIn"
+    >
+      <h1 class="text-5xl font-bold mb-6 text-gradient">
+        Welcome to FinanceAI Chatbot
+      </h1>
+      <p class="text-xl mb-8 text-green-300">
+        Get instant answers to your financial questions using our advanced
+        AI-powered chatbot.
+      </p>
+      <div class="space-y-4 animate-fadeIn" style="animation-delay: 0.3s;">
+        <p class="text-lg text-green-400">Our chatbot can help you with:</p>
+        <ul
+          class="list-none text-left max-w-md mx-auto text-green-200 space-y-2"
+        >
+          <li class="flex items-center">
+            <span class="mr-2 text-green-400">✓</span>Company information
+          </li>
+          <li class="flex items-center">
+            <span class="mr-2 text-green-400">✓</span>Dividend and earnings
+            dates
+          </li>
+          <li class="flex items-center">
+            <span class="mr-2 text-green-400">✓</span>Stock splits history
+          </li>
+          <li class="flex items-center">
+            <span class="mr-2 text-green-400">✓</span>Mutual fund and
+            institutional holders
+          </li>
+          <li class="flex items-center">
+            <span class="mr-2 text-green-400">✓</span>Stock upgrades and
+            downgrades
+          </li>
+          <li class="flex items-center">
+            <span class="mr-2 text-green-400">✓</span>Latest stock news
+          </li>
+        </ul>
+      </div>
+      <a
+        href="chat.html"
+        class="inline-block mt-8 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105 animate-fadeIn"
+        style="animation-delay: 0.6s;"
+        >Start Chatting Now</a
+      >
+    </div>
+  </body>
+</html>
